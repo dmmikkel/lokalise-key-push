@@ -98,6 +98,7 @@ async function run () {
 
     console.log(`Pushing ${uploadKeys.length} new keys to Lokalise`)
     await lokalise.keys.create(uploadKeys, { project_id: projectId });
+    console.log('Uploaded successfully!')
 
   } catch (error) {
     core.setFailed(error.message);
