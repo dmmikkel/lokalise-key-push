@@ -22,6 +22,9 @@ inputs:
   languages:
     description: The languages used
     required: true
+  format:
+    description: The file format
+    default: json
     
 runs:
   using: 'node12'

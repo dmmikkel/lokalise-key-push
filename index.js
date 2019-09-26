@@ -2,7 +2,7 @@ const path = require('path');
 const core = require('@actions/core');
 const { LokaliseApi } = require('@lokalise/node-api');
 const {
-  readJsonFile,
+  readFile,
   objectToKeyValuePairs,
   buildLanguageFilePaths
 } = require('./utils')
@@ -33,14 +33,15 @@ async function run () {
     const toCreate = {};
     await Promise.all(
       files.map(async (file) => {
-        const json = await readJsonFile(file);
+        const data = await readFile(file);
         console.log('Read file ' + file);
+        
         const lang = file.split('.')[0];
         console.log(`    Use as language '${lang}'`);
 
-        const pairs = objectToKeyValuePairs(json);
+        const pairs = jsonParser(data);
         console.log(`    ${pairs.length} keys`);
-        
+
         const newKeyValues = pairs.filter(({ key }) => existingKeys.indexOf(key) === -1)
         console.log(`    ${newKeyValues.length} new keys`);
 
