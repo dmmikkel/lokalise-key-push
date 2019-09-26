@@ -16,6 +16,12 @@ inputs:
   key-name-property:
     description: The Lokalise platform to use when comparing key names
     default: web
+  platforms:
+    description: The platforms where new keys should be pushed
+    default: ios android web other
+  languages:
+    description: The languages used
+    required: true
     
 runs:
   using: 'node12'

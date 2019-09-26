@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 
 async function readJsonFile (path) {
   return new Promise((resolve, reject) => {
@@ -25,7 +26,12 @@ function objectToKeyValuePairs (o, prefix = '') {
   return names;
 }
 
+function buildLanguageFilePaths (basePath, extension, languages) {
+  return languages.map(x => path.join(basePath, x + '.' + extension));
+}
+
 export {
   readJsonFile,
   objectToKeyValuePairs,
+  buildLanguageFilePaths,
 }
