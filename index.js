@@ -52,7 +52,7 @@ async function run () {
 
     const lokalise = new LokaliseApi({ apiKey });
     let globPattern = `${directory}/*.${fileExtension}`;
-    if (directory || directory !== '.') {
+    if (!directory || directory !== '.') {
       globPattern = `*.${fileExtension}`;
     }
     const files = await findFiles(globPattern);
