@@ -28,6 +28,19 @@ async function readJsonFile (path) {
   })
 }
 
+function objectToKeyValuePairs (o, prefix = '') {
+  const names = [];
+  for (let key in o) {
+    if (typeof o[key] === 'object') {
+      const children = objectToKeyNames(o[key], prefix + key + '::');
+      children.forEach(c => names.push(c));
+    } else {
+      names.push({ key: prefix + key, value: o[key] });
+    }
+  }
+  return names;
+}
+
 async function run () {
   try {
     const apiKey = core.getInput('api-token');
@@ -46,8 +59,12 @@ async function run () {
 
     files.forEach(async (file) => {
       const json = await readJsonFile(path.join(process.env.GITHUB_WORKSPACE, file));
-      console.log('File ' + file);
-      console.log(json);
+      const pairs = objectToKeyValuePairs(json);
+      console.log('File', file);
+      console.log(pairs);
+
+      const newKeyValues = pairs.filter(({ key }) => existingKeys.indexOf(key) === -1)
+      console.log('New pairs', newKeyValues)
     })
 
   } catch (error) {
