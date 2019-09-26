@@ -1,8 +1,8 @@
-const fs = require('fs');
 const path = require('path');
 const core = require('@actions/core');
 const glob = require("glob");
 const { LokaliseApi } = require('@lokalise/node-api');
+const { readJsonFile, objectToKeyValuePairs } = require('./utils')
 
 async function findFiles (pattern) {
   return new Promise((resolve, reject) => {
@@ -16,31 +16,6 @@ async function findFiles (pattern) {
   })
 }
 
-async function readJsonFile (path) {
-  return new Promise((resolve, reject) => {
-    fs.readFile(path, (err, data) => {
-      if (err) {
-        reject(err);
-        return;
-      }
-      resolve(JSON.parse(data));
-    });
-  })
-}
-
-function objectToKeyValuePairs (o, prefix = '') {
-  const names = [];
-  for (let key in o) {
-    if (typeof o[key] === 'object') {
-      const children = objectToKeyValuePairs(o[key], prefix + key + '::');
-      children.forEach(c => names.push(c));
-    } else {
-      names.push({ key: prefix + key, value: o[key] });
-    }
-  }
-  return names;
-}
-
 async function run () {
   try {
     const apiKey = core.getInput('api-token');
@@ -49,6 +24,7 @@ async function run () {
     const fileExtension = core.getInput('file-extension');
     const keyNameProperty = core.getInput('key-name-property');
     const platforms = core.getInput('platforms').split(/\s/).map(x => x.trim());
+    const languages = core.getInput('languages').split(/\s/).map(x => x.trim());
 
     const lokalise = new LokaliseApi({ apiKey });
     let globPattern = `${directory}/*.${fileExtension}`;
