@@ -1,0 +1,19 @@
+name: Lokalise Key Push
+description: 'Pushes new translations keys to Lokalise'
+inputs:
+  api-token:
+    description: API token
+    required: true
+  project-id:
+    description: The project ID
+    required: true
+  glob-pattern:
+    description: The glob pattern of files containing keys
+    required: true
+  format:
+    description: The file format
+    default: JSON
+    
+runs:
+  using: 'node12'
+  main: 'index.js'
