@@ -32,7 +32,7 @@ function objectToKeyValuePairs (o, prefix = '') {
   const names = [];
   for (let key in o) {
     if (typeof o[key] === 'object') {
-      const children = objectToKeyNames(o[key], prefix + key + '::');
+      const children = objectToKeyValuePairs(o[key], prefix + key + '::');
       children.forEach(c => names.push(c));
     } else {
       names.push({ key: prefix + key, value: o[key] });
