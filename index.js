@@ -45,11 +45,13 @@ async function run () {
   try {
     const apiKey = core.getInput('api-token');
     const projectId = core.getInput('project-id');
-    const globPattern = core.getInput('glob-pattern');
+    const directory = core.getInput('directory');
+    const fileExtension = core.getInput('file-extension');
     const keyNameProperty = core.getInput('key-name-property');
+    const platforms = core.getInput('platforms');
 
     const lokalise = new LokaliseApi({ apiKey });
-    const files = await findFiles(globPattern);
+    const files = await findFiles(`${directory}/*.${fileExtension}`);
     console.log(`Found ${files.length} language files`);
 
     const lokaliseKeys = await lokalise.keys.list({ project_id: projectId });
@@ -86,7 +88,7 @@ async function run () {
       console.log('    ' + key);
       const lokaliseKey = {
         key_name: key,
-        platforms: ["ios", "android", "web", "other"], // TODO: Add to config
+        platforms,
         translations: []
       };
       for (const lang in toCreate[key]) {
