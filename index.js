@@ -50,22 +50,51 @@ async function run () {
 
     const lokalise = new LokaliseApi({ apiKey });
     const files = await findFiles(globPattern);
+    console.log(`Found ${files.length} language files`);
 
     const lokaliseKeys = await lokalise.keys.list({ project_id: projectId });
     const existingKeys = lokaliseKeys.map(x => x.key_name[keyNameProperty]);
+    console.log(`Found ${existingKeys.length} existing keys in Lokalise`);
 
-    console.log('files', files);
-    console.log('existingKeys', existingKeys);
-
+    const toCreate = {};
     files.forEach(async (file) => {
+      console.log('Checking file ' + file);
+      const lang = file.split('.')[0]
+      console.log(`    Use as language '${lang}'`);
+
       const json = await readJsonFile(path.join(process.env.GITHUB_WORKSPACE, file));
       const pairs = objectToKeyValuePairs(json);
-      console.log('File', file);
-      console.log(pairs);
-
+      console.log(`    ${pairs.length} keys`);
+      
       const newKeyValues = pairs.filter(({ key }) => existingKeys.indexOf(key) === -1)
-      console.log('New pairs', newKeyValues)
+      console.log(`    ${newKeyValues.length} new keys`);
+
+      newKeyValues.forEach(({ key, value }) => {
+        if (!(key in toCreate)) {
+          toCreate[key] = {};
+        }
+        toCreate[key][lang] = value;
+      })
     })
+
+    // Upload
+    const lokaliseKeys = [];
+    for (const key in toCreate) {
+      const lokaliseKey = {
+        key_name: key,
+        platforms: ["ios", "android", "web", "other"],
+        translations: []
+      };
+      for (const lang in toCreate[key]) {
+        lokaliseKey.translations.push({
+          language_iso: lang,
+          translation: toCreate[key][lang]
+        });
+      }
+      lokaliseKeys.push(lokaliseKey);
+    }
+
+    await lokalise.keys.create(lokaliseKeys, { project_id: projectId });
 
   } catch (error) {
     core.setFailed(error.message);
