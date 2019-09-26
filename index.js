@@ -21,7 +21,7 @@ async function run () {
     const globPattern = core.getInput('glob-pattern');
     const format = core.getInput('format');
 
-    if (format !== 'Json') {
+    if (format !== 'json') {
       throw new Error('Not a supported format');
     }
 

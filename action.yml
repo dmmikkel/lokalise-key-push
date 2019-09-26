@@ -12,7 +12,7 @@ inputs:
     required: true
   format:
     description: The file format
-    default: JSON
+    default: json
     
 runs:
   using: 'node12'
