@@ -78,7 +78,7 @@ async function run () {
     })
 
     // Upload
-    const lokaliseKeys = [];
+    const uploadKeys = [];
     for (const key in toCreate) {
       const lokaliseKey = {
         key_name: key,
@@ -91,10 +91,10 @@ async function run () {
           translation: toCreate[key][lang]
         });
       }
-      lokaliseKeys.push(lokaliseKey);
+      uploadKeys.push(lokaliseKey);
     }
 
-    await lokalise.keys.create(lokaliseKeys, { project_id: projectId });
+    await lokalise.keys.create(uploadKeys, { project_id: projectId });
 
   } catch (error) {
     core.setFailed(error.message);
