@@ -48,7 +48,7 @@ async function run () {
     const directory = core.getInput('directory');
     const fileExtension = core.getInput('file-extension');
     const keyNameProperty = core.getInput('key-name-property');
-    const platforms = core.getInput('platforms');
+    const platforms = core.getInput('platforms').split(/\s/).map(x => x.trim());
 
     const lokalise = new LokaliseApi({ apiKey });
     const files = await findFiles(`${directory}/*.${fileExtension}`);
