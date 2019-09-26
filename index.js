@@ -79,15 +79,18 @@ async function run () {
       })
     );
 
-    // Upload
+    // Prepare push
+    console.log('New keys:');
     const uploadKeys = [];
     for (const key in toCreate) {
+      console.log('    ' + key);
       const lokaliseKey = {
         key_name: key,
         platforms: ["ios", "android", "web", "other"],
         translations: []
       };
       for (const lang in toCreate[key]) {
+        console.log(`        ${lang}: ${toCreate[key][lang]}`);
         lokaliseKey.translations.push({
           language_iso: lang,
           translation: toCreate[key][lang]
@@ -96,9 +99,11 @@ async function run () {
       uploadKeys.push(lokaliseKey);
     }
 
-    console.log(`Pushing ${uploadKeys.length} new keys to Lokalise`);
-    await lokalise.keys.create(uploadKeys, { project_id: projectId });
-    console.log('Uploaded successfully!');
+    if (uploadKeys.length > 0) {
+      console.log(`Pushing ${uploadKeys.length} new keys to Lokalise`);
+      await lokalise.keys.create(uploadKeys, { project_id: projectId });
+      console.log('Push done!');
+    }
 
   } catch (error) {
     core.setFailed(error.message);
