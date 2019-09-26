@@ -44,7 +44,7 @@ async function run () {
     console.log('files', files);
     console.log('existingKeys', existingKeys);
 
-    files.forEach(file => {
+    files.forEach(async (file) => {
       const json = await readJsonFile(path.join(process.env.GITHUB_WORKSPACE, file));
       console.log('File ' + file);
       console.log(json);
