@@ -61,7 +61,7 @@ async function run () {
       files.map(async (file) => {
         const json = await readJsonFile(path.join(process.env.GITHUB_WORKSPACE, file));
         console.log('Read file ' + file);
-        const lang = file.split('.')[0]
+        const lang = file.split('.')[0]; // TODO: Better determine language
         console.log(`    Use as language '${lang}'`);
 
         const pairs = objectToKeyValuePairs(json);
@@ -86,7 +86,7 @@ async function run () {
       console.log('    ' + key);
       const lokaliseKey = {
         key_name: key,
-        platforms: ["ios", "android", "web", "other"],
+        platforms: ["ios", "android", "web", "other"], // TODO: Add to config
         translations: []
       };
       for (const lang in toCreate[key]) {
