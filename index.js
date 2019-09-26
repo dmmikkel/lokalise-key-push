@@ -51,7 +51,11 @@ async function run () {
     const platforms = core.getInput('platforms').split(/\s/).map(x => x.trim());
 
     const lokalise = new LokaliseApi({ apiKey });
-    const files = await findFiles(`${directory}/*.${fileExtension}`);
+    let globPattern = `${directory}/*.${fileExtension}`
+    if (directory && directory !== '.') {
+      globPattern = `*.${fileExtension}`
+    }
+    const files = await findFiles(globPattern);
     console.log(`Found ${files.length} language files`);
 
     const lokaliseKeys = await lokalise.keys.list({ project_id: projectId });
