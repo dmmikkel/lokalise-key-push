@@ -61,7 +61,7 @@ async function run () {
     }
     console.log(`Found ${files.length} language files`);
 
-    const lokaliseKeys = await lokalise.keys.list({ project_id: projectId });
+    const lokaliseKeys = await lokalise.keys.list({ project_id: projectId, limit: 5000 }); // TODO: Implement pagination if more than 5000 keys
     const existingKeys = lokaliseKeys.map(x => x.key_name[keyNameProperty]);
     console.log(`Found ${existingKeys.length} existing keys in Lokalise`);
 
@@ -70,7 +70,7 @@ async function run () {
       files.map(async (file) => {
         const json = await readJsonFile(path.join(process.env.GITHUB_WORKSPACE, file));
         console.log('Read file ' + file);
-        const lang = file.split('.')[0]; // TODO: Better determine language
+        const lang = file.split('.')[0];
         console.log(`    Use as language '${lang}'`);
 
         const pairs = objectToKeyValuePairs(json);
