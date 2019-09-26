@@ -51,11 +51,14 @@ async function run () {
     const platforms = core.getInput('platforms').split(/\s/).map(x => x.trim());
 
     const lokalise = new LokaliseApi({ apiKey });
-    let globPattern = `${directory}/*.${fileExtension}`
+    let globPattern = `${directory}/*.${fileExtension}`;
     if (directory && directory !== '.') {
-      globPattern = `*.${fileExtension}`
+      globPattern = `*.${fileExtension}`;
     }
     const files = await findFiles(globPattern);
+    if (files.length === 0) {
+      throw new Error('Found no language files with pattern ' + globPattern);
+    }
     console.log(`Found ${files.length} language files`);
 
     const lokaliseKeys = await lokalise.keys.list({ project_id: projectId });
