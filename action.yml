@@ -10,9 +10,8 @@ inputs:
   glob-pattern:
     description: The glob pattern of files containing keys
     required: true
-  format:
-    description: The file format
-    default: json
+  key-name-property:
+    default: web
     
 runs:
   using: 'node12'
