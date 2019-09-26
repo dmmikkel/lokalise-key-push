@@ -57,25 +57,27 @@ async function run () {
     console.log(`Found ${existingKeys.length} existing keys in Lokalise`);
 
     const toCreate = {};
-    files.forEach(async (file) => {
-      console.log('Checking file ' + file);
-      const lang = file.split('.')[0]
-      console.log(`    Use as language '${lang}'`);
+    await Promise.all(
+      files.map(async (file) => {
+        const json = await readJsonFile(path.join(process.env.GITHUB_WORKSPACE, file));
+        console.log('Read file ' + file);
+        const lang = file.split('.')[0]
+        console.log(`    Use as language '${lang}'`);
 
-      const json = await readJsonFile(path.join(process.env.GITHUB_WORKSPACE, file));
-      const pairs = objectToKeyValuePairs(json);
-      console.log(`    ${pairs.length} keys`);
-      
-      const newKeyValues = pairs.filter(({ key }) => existingKeys.indexOf(key) === -1)
-      console.log(`    ${newKeyValues.length} new keys`);
+        const pairs = objectToKeyValuePairs(json);
+        console.log(`    ${pairs.length} keys`);
+        
+        const newKeyValues = pairs.filter(({ key }) => existingKeys.indexOf(key) === -1)
+        console.log(`    ${newKeyValues.length} new keys`);
 
-      newKeyValues.forEach(({ key, value }) => {
-        if (!(key in toCreate)) {
-          toCreate[key] = {};
-        }
-        toCreate[key][lang] = value;
+        newKeyValues.forEach(({ key, value }) => {
+          if (!(key in toCreate)) {
+            toCreate[key] = {};
+          }
+          toCreate[key][lang] = value;
+        })
       })
-    })
+    );
 
     // Upload
     const uploadKeys = [];
@@ -94,6 +96,7 @@ async function run () {
       uploadKeys.push(lokaliseKey);
     }
 
+    console.log(`Pushing ${uploadKeys.length} new keys to Lokalise`)
     await lokalise.keys.create(uploadKeys, { project_id: projectId });
 
   } catch (error) {
