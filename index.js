@@ -39,7 +39,8 @@ async function run () {
         const data = await readFile(file);
         console.log('Read file ' + file);
         
-        const lang = path.parse(file).name
+        const lang = path.parse(file).name.substr(filePrefix.length);
+
         console.log(`    Use as language '${lang}'`);
 
         let pairs;
