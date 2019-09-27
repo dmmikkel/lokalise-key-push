@@ -27,6 +27,6 @@ jobs:
         platforms: ios android web other
         languages: no en
         format: properties
-        prefix: messages_
+        file-prefix: messages_
 
 ```
