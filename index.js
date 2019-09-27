@@ -1,45 +1,12 @@
-const fs = require('fs');
 const path = require('path');
 const core = require('@actions/core');
-const glob = require("glob");
 const { LokaliseApi } = require('@lokalise/node-api');
-
-async function findFiles (pattern) {
-  return new Promise((resolve, reject) => {
-    glob(pattern, { cwd: process.env.GITHUB_WORKSPACE }, function (err, files) {
-      if (err) {
-        reject(err);
-        return;
-      }
-      resolve(files);
-    })
-  })
-}
-
-async function readJsonFile (path) {
-  return new Promise((resolve, reject) => {
-    fs.readFile(path, (err, data) => {
-      if (err) {
-        reject(err);
-        return;
-      }
-      resolve(JSON.parse(data));
-    });
-  })
-}
-
-function objectToKeyValuePairs (o, prefix = '') {
-  const names = [];
-  for (let key in o) {
-    if (typeof o[key] === 'object') {
-      const children = objectToKeyValuePairs(o[key], prefix + key + '::');
-      children.forEach(c => names.push(c));
-    } else {
-      names.push({ key: prefix + key, value: o[key] });
-    }
-  }
-  return names;
-}
+const jsonFormatParser = require('./json-format-parser');
+const propertiesFormatParser = require('./properties-format-parser');
+const {
+  readFile,
+  buildLanguageFilePaths
+} = require('./utils');
 
 async function run () {
   try {
@@ -48,17 +15,17 @@ async function run () {
     const directory = core.getInput('directory');
     const fileExtension = core.getInput('file-extension');
     const keyNameProperty = core.getInput('key-name-property');
+    const format = core.getInput('format');
     const platforms = core.getInput('platforms').split(/\s/).map(x => x.trim());
+    const languages = core.getInput('languages').split(/\s/).map(x => x.trim());
+
+    if (!languages || languages.length === 0) {
+      throw new Error('Missing languages input');
+    }
 
     const lokalise = new LokaliseApi({ apiKey });
-    let globPattern = `${directory}/*.${fileExtension}`;
-    if (!directory || directory === '.') {
-      globPattern = `*.${fileExtension}`;
-    }
-    const files = await findFiles(globPattern);
-    if (files.length === 0) {
-      throw new Error('Found no language files with pattern ' + globPattern);
-    }
+
+    const files = buildLanguageFilePaths(path.join(process.env.GITHUB_WORKSPACE, directory), fileExtension, languages);
     console.log(`Found ${files.length} language files`);
 
     const lokaliseKeys = await lokalise.keys.list({ project_id: projectId, limit: 5000 }); // TODO: Implement pagination if more than 5000 keys
@@ -68,14 +35,26 @@ async function run () {
     const toCreate = {};
     await Promise.all(
       files.map(async (file) => {
-        const json = await readJsonFile(path.join(process.env.GITHUB_WORKSPACE, file));
+        const data = await readFile(file);
         console.log('Read file ' + file);
-        const lang = file.split('.')[0];
+        
+        const lang = path.parse(file).name
         console.log(`    Use as language '${lang}'`);
 
-        const pairs = objectToKeyValuePairs(json);
+        let pairs;
+        switch (format) {
+          case 'json':
+            pairs = jsonFormatParser(data);
+            break;
+          case 'properties':
+            pairs = propertiesFormatParser(data);
+            break;
+          default:
+            throw new Error('No parser found for format');
+        }
+
         console.log(`    ${pairs.length} keys`);
-        
+
         const newKeyValues = pairs.filter(({ key }) => existingKeys.indexOf(key) === -1)
         console.log(`    ${newKeyValues.length} new keys`);
 
