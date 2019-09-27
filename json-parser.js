@@ -12,7 +12,6 @@ function objectToKeyValuePairs (o, prefix = '') {
 }
 
 module.exports = (data) => {
-  console.log('parsing json', data);
   const json = JSON.parse(data);
   return objectToKeyValuePairs(json); 
 }
