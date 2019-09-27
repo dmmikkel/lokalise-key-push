@@ -1,11 +1,11 @@
 const path = require('path');
 const core = require('@actions/core');
 const { LokaliseApi } = require('@lokalise/node-api');
+const jsonParser = require('./json-parser');
 const {
   readFile,
-  objectToKeyValuePairs,
   buildLanguageFilePaths
-} = require('./utils')
+} = require('./utils');
 
 async function run () {
   try {
@@ -36,7 +36,7 @@ async function run () {
         const data = await readFile(file);
         console.log('Read file ' + file);
         
-        const lang = file.split('.')[0];
+        const lang = path.parse(file).name
         console.log(`    Use as language '${lang}'`);
 
         const pairs = jsonParser(data);
