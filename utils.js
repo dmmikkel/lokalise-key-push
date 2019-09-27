@@ -13,6 +13,6 @@ module.exports.readFile = function (path) {
   })
 }
 
-module.exports.buildLanguageFilePaths = function (basePath, extension, languages) {
-  return languages.map(x => path.join(basePath, x + '.' + extension));
+module.exports.buildLanguageFilePaths = function (basePath, prefix, extension, languages) {
+  return languages.map(lang => path.join(basePath, prefix + lang + '.' + extension));
 }

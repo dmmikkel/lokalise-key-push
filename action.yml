@@ -25,6 +25,9 @@ inputs:
   format:
     description: The file format
     default: json
+  file-prefix:
+    description: A prefix to be prepended to file name of language files.
+    default: ''
     
 runs:
   using: 'node12'
