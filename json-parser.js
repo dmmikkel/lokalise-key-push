@@ -11,7 +11,7 @@ function objectToKeyValuePairs (o, prefix = '') {
   return names;
 }
 
-export default (data) => {
+module.exports = (data) => {
   const json = JSON.parse(data);
   return objectToKeyValuePairs(json); 
 }

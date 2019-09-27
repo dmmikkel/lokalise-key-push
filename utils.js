@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-async function readFile (path) {
+module.exports.readFile = function (path) {
   return new Promise((resolve, reject) => {
     fs.readFile(path, (err, data) => {
       if (err) {
@@ -13,11 +13,6 @@ async function readFile (path) {
   })
 }
 
-function buildLanguageFilePaths (basePath, extension, languages) {
+module.exports.buildLanguageFilePaths = function (basePath, extension, languages) {
   return languages.map(x => path.join(basePath, x + '.' + extension));
-}
-
-export {
-  readFile,
-  buildLanguageFilePaths,
 }
