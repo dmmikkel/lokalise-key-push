@@ -8,7 +8,7 @@ module.exports.readFile = function (path) {
         reject(err);
         return;
       }
-      resolve(JSON.parse(data));
+      resolve(data);
     });
   })
 }
