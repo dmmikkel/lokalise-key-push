@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "@actions/core": "^1.1.1",
-    "@lokalise/node-api": "^1.2.0"
+    "@lokalise/node-api": "^1.2.0",
+    "properties-parser": "^0.3.1"
   }
 }

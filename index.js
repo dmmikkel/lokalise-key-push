@@ -1,7 +1,8 @@
 const path = require('path');
 const core = require('@actions/core');
 const { LokaliseApi } = require('@lokalise/node-api');
-const jsonParser = require('./json-parser');
+const jsonFormatParser = require('./json-format-parser');
+const propertiesFormatParser = require('./properties-format-parser');
 const {
   readFile,
   buildLanguageFilePaths
@@ -14,6 +15,7 @@ async function run () {
     const directory = core.getInput('directory');
     const fileExtension = core.getInput('file-extension');
     const keyNameProperty = core.getInput('key-name-property');
+    const format = core.getInput('format');
     const platforms = core.getInput('platforms').split(/\s/).map(x => x.trim());
     const languages = core.getInput('languages').split(/\s/).map(x => x.trim());
 
@@ -39,7 +41,18 @@ async function run () {
         const lang = path.parse(file).name
         console.log(`    Use as language '${lang}'`);
 
-        const pairs = jsonParser(data);
+        let pairs;
+        switch (format) {
+          case 'json':
+            pairs = jsonFormatParser(data);
+            break;
+          case 'properties':
+            pairs = propertiesFormatParser(data);
+            break;
+          default:
+            throw new Error('No parser found for format');
+        }
+
         console.log(`    ${pairs.length} keys`);
 
         const newKeyValues = pairs.filter(({ key }) => existingKeys.indexOf(key) === -1)
