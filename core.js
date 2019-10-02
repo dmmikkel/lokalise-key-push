@@ -13,10 +13,55 @@ module.exports = async (context, { LokaliseApi, fs }) => {
   _fs = fs;
   
   const remoteKeys = await getRemoteKeys();
-  console.log(`Fetched ${remoteKeys.length} remote keys.`);
+  console.log(`${remoteKeys.length} remote keys.`);
 
   const localKeys = await getLocalKeys();
-  console.log(localKeys);
+
+  const keysToCreate = getKeysToCreate(localKeys, remoteKeys);
+
+  const createRequest = buildLokaliseCreateKeysRequest(keysToCreate);
+  console.log(JSON.stringify(createRequest, null, 2));
+}
+
+function buildLokaliseCreateKeysRequest (toCreate) {
+  console.log('Creating keys');
+  const uploadKeys = [];
+  for (const key in toCreate) {
+    console.log('    ' + key);
+    const lokaliseKey = {
+      key_name: key,
+      platforms: [_context.platform],
+      translations: [],
+      filenames: {
+        [_context.platform]: _context.filename
+      }
+    };
+    for (const lang in toCreate[key]) {
+      console.log(`        ${lang}: ${toCreate[key][lang]}`);
+      lokaliseKey.translations.push({
+        language_iso: lang,
+        translation: toCreate[key][lang]
+      });
+    }
+    uploadKeys.push(lokaliseKey);
+  }
+  return uploadKeys;
+}
+
+function getKeysToCreate (localKeys, remoteKeys) {
+  const toCreate = {};
+  for (const lang in localKeys) {
+    localKeys[lang].forEach(({ key, value }) => {
+      const keyExists = remoteKeys.some(x => x.key_name[_context.platform] === key);
+      if (!keyExists) {
+        if (!(key in toCreate)) {
+          toCreate[key] = {};
+        }
+        toCreate[key][lang] = value;
+      }
+    })
+  }
+  return toCreate;
 }
 
 async function getLocalKeys () {
@@ -42,7 +87,7 @@ async function getLocalKeys () {
       console.log(`Found ${pairs.length} keys in languge file for '${lang}'`);
       languageKeys[lang] = pairs;
     } catch (error) {
-      console.log(`Error reading language file ${lang}: ${error.message}`)
+      console.error(`Error reading language file ${lang}: ${error.message}`)
     }
   })
 
@@ -72,7 +117,6 @@ async function getLanguageISOCodes () {
   const languages = await _lokalise.languages.list({
     project_id: _context.projectId
   });
-  console.log(languages);
   return languages.map(x => x.lang_iso);
 }
 

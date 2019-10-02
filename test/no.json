@@ -1,5 +1,6 @@
 {
   "general": {
-    "male": "Mann"
+    "male": "Mann",
+    "female": "Kvinne"
   }
 }
