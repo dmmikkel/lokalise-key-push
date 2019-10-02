@@ -13,21 +13,15 @@ async function run () {
     const apiKey = core.getInput('api-token');
     const projectId = core.getInput('project-id');
     const directory = core.getInput('directory');
-    const fileExtension = core.getInput('file-extension');
-    const keyNameProperty = core.getInput('key-name-property');
     const format = core.getInput('format');
-    const filePrefix = core.getInput('file-prefix');
-    const platforms = core.getInput('platforms').split(/\s/).map(x => x.trim());
-    const languages = core.getInput('languages').split(/\s/).map(x => x.trim());
+    const platform = core.getInput('platform');
+    const filename = core.getInput('filename');
+    //const fileExtension = core.getInput('file-extension');
+    //const keyNameProperty = core.getInput('key-name-property');
+    //const filePrefix = core.getInput('file-prefix');
+    //const platforms = core.getInput('platforms').split(/\s/).map(x => x.trim());
 
-    if (!languages || languages.length === 0) {
-      throw new Error('Missing languages input');
-    }
 
-    const lokalise = new LokaliseApi({ apiKey });
-
-    const files = buildLanguageFilePaths(path.join(process.env.GITHUB_WORKSPACE, directory), filePrefix, fileExtension, languages);
-    console.log(`Found ${files.length} language files`);
 
     const lokaliseKeys = await lokalise.keys.list({ project_id: projectId, limit: 5000 }); // TODO: Implement pagination if more than 5000 keys
     const existingKeys = lokaliseKeys.map(x => x.key_name[keyNameProperty]);
