@@ -8,8 +8,10 @@ name: Push keys to Lokalise
 
 on:
   push:
+    # Only run workflow for pushes to specific branches
     branches:
       - master
+    # Only run workflow when matching files are changed
     paths:
      - 'src/main/resources/*.properties'
 
