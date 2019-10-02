@@ -28,3 +28,7 @@ jobs:
         filename: messages_%LANG_ISO%.properties
 
 ```
+
+## License
+
+The action is free to use, but the code is copyrighted.
