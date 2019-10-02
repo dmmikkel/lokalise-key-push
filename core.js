@@ -20,11 +20,16 @@ module.exports = async (context, { LokaliseApi, fs }) => {
   const keysToCreate = getKeysToCreate(localKeys, remoteKeys);
 
   const createRequest = buildLokaliseCreateKeysRequest(keysToCreate);
-  console.log(JSON.stringify(createRequest, null, 2));
+  
+  if (createRequest.length > 0) {
+    console.log(`Pushing ${createRequest.length} new keys to Lokalise`);
+    await _lokalise.keys.create(createRequest, { project_id: _context.projectId });
+    console.log('Push done!');
+  }
 }
 
 function buildLokaliseCreateKeysRequest (toCreate) {
-  console.log('Creating keys');
+  console.log('Keys to push:');
   const uploadKeys = [];
   for (const key in toCreate) {
     console.log('    ' + key);
