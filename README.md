@@ -17,8 +17,8 @@ jobs:
   upload:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3.4
-    - uses: dmmikkel/lokalise-key-push@Add-support-for-multiple-formats
+    - uses: actions/checkout@v1
+    - uses: dmmikkel/lokalise-key-push@v3.4
       with:
         api-token: ${{ secrets.lokalise_token }}
         project-id: 748610715d8afa5681a4b1.23888602
