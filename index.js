@@ -14,7 +14,7 @@ const filename = ghCore.getInput('filename');
 core({
   apiKey,
   projectId,
-  directory: path.join(__dirname, directory),
+  directory: path.join(process.env.GITHUB_WORKSPACE, directory),
   format,
   platform,
   filename,
