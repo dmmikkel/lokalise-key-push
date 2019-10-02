@@ -1,5 +1,8 @@
 name: Lokalise Key Push
 description: 'Pushes new translations keys to Lokalise'
+branding:
+  icon: arrow-up-circle
+  color: purple
 inputs:
   api-token:
     description: API token
