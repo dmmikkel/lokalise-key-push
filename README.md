@@ -1,5 +1,6 @@
 # lokalise-key-push
-GitHub Action that pushes new translations keys to Lokalise
+
+Lets you automatically push new language keys to your Lokalise.co project.
 
 ## How to use
 ```
