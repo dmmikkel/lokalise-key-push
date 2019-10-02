@@ -1,14 +1,15 @@
 const path = require('path');
 const fs = require('fs');
 const core = require('./core');
+const ghCore = require('@actions/core');
 const { LokaliseApi } = require('@lokalise/node-api');
 
-const apiKey = core.getInput('api-token');
-const projectId = core.getInput('project-id');
-const directory = core.getInput('directory');
-const format = core.getInput('format');
-const platform = core.getInput('platform');
-const filename = core.getInput('filename');
+const apiKey = ghCore.getInput('api-token');
+const projectId = ghCore.getInput('project-id');
+const directory = ghCore.getInput('directory');
+const format = ghCore.getInput('format');
+const platform = ghCore.getInput('platform');
+const filename = ghCore.getInput('filename');
 
 core({
   apiKey,
@@ -22,4 +23,4 @@ core({
   fs
 })
 .then(() => console.log('Finished'))
-.catch(error => core.setFailed(error ? error.message : 'Unknown error'))
+.catch(error => ghCore.setFailed(error ? error.message : 'Unknown error'))
