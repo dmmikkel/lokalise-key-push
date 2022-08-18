@@ -10,7 +10,7 @@
   "author": "",
   "license": "No license. Source is copyrighted.",
   "dependencies": {
-    "@actions/core": "^1.1.1",
+    "@actions/core": "^1.9.1",
     "@lokalise/node-api": "^1.2.0",
     "properties-parser": "^0.3.1"
   }
